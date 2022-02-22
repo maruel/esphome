@@ -19,6 +19,20 @@ const uint16_t IFFilterTable[8][2] = {
   { 6207, 0x8E },
 };
 
+void Si4432Component::setup() {
+  this->irq_pin_->setup();
+  this->sdn_pin_->setup();
+  this->sdn_pin_->digital_write(true);
+  this->spi_setup();
+  // TODO(maruel): Trying to make it not crash.
+  //this->hardReset();
+
+  this->dumpAllRegisters();
+  if (this->_rx) {
+    this->startListening();
+  }
+}
+
 void Si4432Component::loop() {
   /* TODO(maruel): Add.
   if (this->_rx) {

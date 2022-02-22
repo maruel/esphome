@@ -13,19 +13,6 @@ namespace esphome {
 namespace si4432 {
 
 /*
-// Pinout:
-//  GND
-//  SDN (hard reset)
-//  MIRQ (interrupt)
-//  NSEL (CS)
-//  SCLK
-//  SDI (MOSI)
-//  SDO (MISO)
-//  VCC
-//  GPIO2 (unused)
-//  GPIO1 (unused)
-//  GPIO0 (unused)
-//  GND (unused)
 class Si4432 {
 public:
   Si4432(uint8_t sdnPin, uint8_t intPin, uint8_t csPin, uint16_t kbps, uint16_t freqMHz)
@@ -149,21 +136,6 @@ public:
     this->clearRxFIFO();
   }
 
-  void clearTxFIFO() {
-    this->setRegister(REG_OPERATION_CONTROL, 0x01);
-    this->setRegister(REG_OPERATION_CONTROL, 0x00);
-  }
-
-  void clearRxFIFO() {
-    this->setRegister(REG_OPERATION_CONTROL, 0x02);
-    this->setRegister(REG_OPERATION_CONTROL, 0x00);
-  }
-
-  // Clear FIFOs and interrupts.
-  void clearFIFO() {
-    this->setRegister(REG_OPERATION_CONTROL, 0x03);
-    this->setRegister(REG_OPERATION_CONTROL, 0x00);
-  }
 
   / *
   void softReset() {
@@ -183,6 +155,19 @@ private:
 
 */
 
+// Pinout:
+//  GND
+//  SDN (hard reset)
+//  MIRQ (interrupt)
+//  NSEL (CS)
+//  SCLK
+//  SDI (MOSI)
+//  SDO (MISO)
+//  VCC
+//  GPIO2 (unused)
+//  GPIO1 (unused)
+//  GPIO0 (unused)
+//  GND (unused)
 // https://esphome.io/custom/spi.html
 // TODO(maruel): 1MHz once confirmed to work.
 class Si4432Component :
@@ -198,18 +183,7 @@ class Si4432Component :
   void setBaudRate(uint16_t kbps) { this->kbps_ = kbps; }
   void setChannel(uint8_t channel) { this->channel_ = channel; }
 
-  void setup() override {
-    this->irq_pin_->setup();
-    this->sdn_pin_->setup();
-    this->sdn_pin_->digital_write(true);
-    this->spi_setup();
-    this->hardReset();
-
-    this->dumpAllRegisters();
-    if (this->_rx) {
-      this->startListening();
-    }
-  }
+  void setup() override;
   void loop() override;
 
 /*
@@ -358,6 +332,22 @@ protected:
 
   // Logs all the register values.
   void dumpAllRegisters();
+
+  void clearTxFIFO() {
+    this->setRegister(REG_OPERATION_CONTROL, 0x01);
+    this->setRegister(REG_OPERATION_CONTROL, 0x00);
+  }
+
+  void clearRxFIFO() {
+    this->setRegister(REG_OPERATION_CONTROL, 0x02);
+    this->setRegister(REG_OPERATION_CONTROL, 0x00);
+  }
+
+  // Clear FIFOs and interrupts.
+  void clearFIFO() {
+    this->setRegister(REG_OPERATION_CONTROL, 0x03);
+    this->setRegister(REG_OPERATION_CONTROL, 0x00);
+  }
 
   // Turn on the chip now.
   // TODO(maruel): Can't be called from within loop() due to delay().
