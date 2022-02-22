@@ -229,7 +229,11 @@ void Si4432Component::writeRegisters(Si4432Component::Register reg, const byte v
   this->enable();
   // Set MSB for write.
   this->write_byte((byte)(reg | 0x80));
-  this->write_array(value, length);
+  // TODO(maruel): write_array() requires alignment.
+  //this->write_array(value, length);
+  for (int i = 0; i < length; i++) {
+    this->write_byte(value[i]);
+  }
   this->disable();
   //ESP_LOGV(TAG, "Writing: %x | %x", regVal!=0xFF ? (regVal+i) & 0x7F : 0x7F, value[i]);
   //ESP_LOGV(TAG, "Write %x: %s", startReg, format_hex_pretty(value, length).c_str());
@@ -239,7 +243,11 @@ void Si4432Component::readRegisters(Si4432Component::Register reg, byte value[],
   // SPIDevice method names are quite generic sounding.
   this->enable();
   this->write_byte((byte)(reg & 0x7F));
-  this->read_array(value, length);
+  // TODO(maruel): read_array() requires alignment.
+  //this->read_array(value, length);
+  for (int i = 0; i < length; i++) {
+    value[i] = this->read_byte();
+  }
   //ESP_LOGV(TAG, "Reading: %x | %x", regVal!=0x7F ? (regVal+i) & 0x7F : 0x7F, value[i]);
   //ESP_LOGV(TAG, "Read %x: %s", regVal, format_hex_pretty(value, length).c_str());
 }
