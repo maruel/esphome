@@ -43,9 +43,15 @@ class SpiLedStrip : public light::AddressableLight,
     memset(this->buf_, 0, 4);
   }
 
+  void set_bit_depth(uint8_t bits) {
+    this->bit_depth_ = bits;
+    // Update the color correction.
+  }
+
   void dump_config() {
     esph_log_config(TAG, "SPI LED Strip:");
     esph_log_config(TAG, "  LEDs: %d", this->num_leds_);
+    esph_log_config(TAG, "  Bits: %d", this->bit_depth_);
     if (this->data_rate_ >= spi::DATA_RATE_1MHZ)
       esph_log_config(TAG, "  Data rate: %uMHz", (unsigned) (this->data_rate_ / 1000000));
     else
@@ -85,6 +91,7 @@ class SpiLedStrip : public light::AddressableLight,
   uint8_t *effect_data_{nullptr};
   uint8_t *buf_{nullptr};
   uint16_t num_leds_;
+  uint8_t bit_depth_;
 };
 
 }  // namespace spi_led_strip

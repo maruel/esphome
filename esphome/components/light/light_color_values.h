@@ -8,6 +8,7 @@ namespace esphome {
 namespace light {
 
 inline static uint8_t to_uint8_scale(float x) { return static_cast<uint8_t>(roundf(x * 255.0f)); }
+inline static uint16_t to_uint16_scale(float x) { return static_cast<uint16_t>(roundf(x * (255.0f * 256.0f))); }
 
 /** This class represents the color state for a light object.
  *
